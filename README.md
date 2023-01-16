@@ -1,9 +1,7 @@
 # @frigade/react-native
 
 [![npm version](https://img.shields.io/npm/v/@frigade/react-native)](https://www.npmjs.com/package/@frigade/react-native)
-[![npm version](https://img.shields.io/npm/dm/@frigade/react-native.svg)](https://www.npmjs.com/package/@frigade/react-native)
 [![npm version](https://github.com/FrigadeHQ/@frigade/react-native/actions/workflows/tests.yml/badge.svg)](https://github.com/FrigadeHQ/@frigade/react-native/actions/workflows/tests.yml)
-[![npm license](https://img.shields.io/npm/l/@frigade/react-native)](https://www.npmjs.com/package/@frigade/react-native)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
 The official React Native SDK for [Frigade](https://frigade.com).
@@ -32,14 +30,25 @@ import { FrigadeProvider } from '@frigade/react-native';
 
 const App = () => {
   return (
-    <FrigadeProvider publicApiKey='<MY_PUBLIC_API_KEY>' userId='<OPTIONAL_USER_ID>'>
+    <FrigadeProvider publicApiKey='<MY_PUBLIC_API_KEY>' 
+                     userId='<OPTIONAL_USER_ID>'>
       ...
     </FrigadeProvider>
   );
 };
 ```
 
+With the `FrigadeProvider` in place, you can now use the `FrigadeFlow` component to render a flow. Make sure to pass the `flowId` of the flow you want to render (copied from the Frigade dashboard).
 
+```jsx
+import { FrigadeFlow } from '@frigade/react-native';
+
+const App = () => {
+  return (
+    <FrigadeFlow flowId='flow_6EoJIzZlOmCACn' />
+    );
+};
+```
 ## Docs
 
 The official docs are available at [docs.frigade.com](https://docs.frigade.com/).
