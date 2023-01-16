@@ -1,5 +1,5 @@
 import React from 'react';
-import {FrigadeProvider, OnboardFlow} from '../index';
+import {FrigadeProvider} from '../index';
 
 describe('Frigade Provider test suite', () => {
   it('component exist', () => {
