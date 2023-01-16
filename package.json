@@ -1,6 +1,6 @@
 {
-  "name": "@frigade/frigade-react-native",
-  "version": "0.0.0-development",
+  "name": "@frigade/react-native",
+  "version": "0.0.1",
   "description": "Delightful and fully customizable onboarding elements for React Native.",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
