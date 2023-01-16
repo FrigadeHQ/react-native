@@ -1,0 +1,2 @@
+export { FrigadeProvider } from "./FrigadeProvider";
+
