@@ -1,24 +1,21 @@
-import React, {createContext, useState} from "react";
+import React, {createContext, FC, useState} from "react";
 import {SWRConfig} from "swr";
 
 export interface IFrigadeContext {
-  apiKey: string
+  publicApiKey: string
   userId?: string
 }
 
 export const FrigadeContext = createContext<IFrigadeContext>({
-  apiKey: '',
+  publicApiKey: '',
 });
 
-/**
- * We make component for manage business logic between children components and context
- * @param children
- * @returns {*}
- * @constructor
- */
-const FrigadeProvider = ({ children }) => {
-  const [apiKey, setApiKey] = useState('');
-  const [userId, setUserId] = useState(null);
+
+export const FrigadeProvider: FC<IFrigadeContext> = ({
+                                                       publicApiKey,
+                                                       userId,
+                                                       children
+                                                     }) => {
 
   return (
     <SWRConfig
@@ -26,15 +23,11 @@ const FrigadeProvider = ({ children }) => {
         /* ... */
       }}
     >
-    <FrigadeContext.Provider value={{
-      apiKey, userId
-    }}>
-      {children}
-    </FrigadeContext.Provider>
+      <FrigadeContext.Provider value={{
+        publicApiKey, userId
+      }}>
+        {children}
+      </FrigadeContext.Provider>
     </SWRConfig>
   )
 }
-
-
-export default FrigadeContext;
-export { FrigadeProvider };

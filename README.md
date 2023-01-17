@@ -1,7 +1,6 @@
 # @frigade/react-native
 
 [![npm version](https://img.shields.io/npm/v/@frigade/react-native)](https://www.npmjs.com/package/@frigade/react-native)
-[![npm version](https://github.com/FrigadeHQ/@frigade/react-native/actions/workflows/tests.yml/badge.svg)](https://github.com/FrigadeHQ/@frigade/react-native/actions/workflows/tests.yml)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
 The official React Native SDK for [Frigade](https://frigade.com).

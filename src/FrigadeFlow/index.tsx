@@ -1,6 +1,5 @@
-import {FC, useContext} from "react";
+import React, {FC} from "react";
 import {OnboardFlow, OnboardFlowProps, PageData, TextStyles} from "react-native-onboard";
-import FrigadeContext from "../FrigadeProvider";
 import {useGetMyFlow} from "../api/flows";
 
 
@@ -11,7 +10,7 @@ interface FrigadeFlowProps extends OnboardFlowProps, TextStyles {
 export const FrigadeFlow: FC<FrigadeFlowProps> = ({
                                                     flowId,
                                                     ...props
-                                                               }) => {
+                                                  }) => {
   const {flow, error, mutate, isLoading} = useGetMyFlow(flowId);
 
   return (
