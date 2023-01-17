@@ -3,7 +3,8 @@ import {SWRConfig} from "swr";
 
 export interface IFrigadeContext {
   publicApiKey: string
-  userId?: string
+  userId?: string,
+  children?: React.ReactNode
 }
 
 export const FrigadeContext = createContext<IFrigadeContext>({
@@ -16,7 +17,6 @@ export const FrigadeProvider: FC<IFrigadeContext> = ({
                                                        userId,
                                                        children
                                                      }) => {
-
   return (
     <SWRConfig
       value={{

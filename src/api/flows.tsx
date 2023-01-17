@@ -7,7 +7,7 @@ export interface Flow {
   id: number;
   name: string;
   description: string;
-  data: any;
+  data: string;
   createdAt: string;
   modifiedAt: string;
   slug: string;
@@ -39,7 +39,8 @@ export function useGetMyFlow(slug: string): { flow: Flow, mutate: () => void, er
     [publicApiKey]
   );
 
-  const { data, error, mutate, isLoading } = useSWR([`${API_PREFIX}flows/${slug}`, config], fetcher);
+  const { data, error, mutate, isLoading } = useSWR([`${API_PREFIX}flows/${slug}`, config],
+    (apiURL: string) => fetch(apiURL).then(res => res.json()));
 
   return {flow: data, error, mutate, isLoading};
 }
