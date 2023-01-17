@@ -1,7 +1,6 @@
 import useSWR from 'swr'
-import React, {useMemo} from "react";
-import {FrigadeContext} from "../FrigadeProvider";
-import {API_PREFIX} from "./common";
+import React from "react";
+import {API_PREFIX, useConfig} from "./common";
 
 export interface Flow {
   id: number;
@@ -13,34 +12,13 @@ export interface Flow {
   slug: string;
 }
 
-const fetcher = async (url, config) => {
-  let res;
-
-  if (config) {
-    res = await fetch(url, config);
-  } else {
-    res = await fetch(url);
-  }
-
-  return res.json();
-};
-
 export function useGetMyFlow(slug: string): { flow: Flow, mutate: () => void, error: boolean, isLoading: boolean } {
-  // get apikey from context
-  const { publicApiKey } = React.useContext(FrigadeContext);
+  const {config} = useConfig();
 
-  const config = useMemo(
-    () => ({
-      headers: {
-        Authorization: `Bearer ${publicApiKey}`,
-        'Content-Type': 'application/json',
-      },
-    }),
-    [publicApiKey]
-  );
-
-  const { data, error, mutate, isLoading } = useSWR([`${API_PREFIX}flows/${slug}`, config],
-    (apiURL: string) => fetch(apiURL).then(res => res.json()));
+  const {data, error, mutate, isLoading} = useSWR(`${API_PREFIX}flows/${slug}`,
+    (apiURL: string) => {
+      return fetch(apiURL, config).then(r => r.json())
+    });
 
   return {flow: data, error, mutate, isLoading};
 }

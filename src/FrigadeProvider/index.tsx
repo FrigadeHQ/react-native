@@ -1,5 +1,6 @@
 import React, {createContext, FC, useState} from "react";
 import {SWRConfig} from "swr";
+import {Text} from "react-native";
 
 export interface IFrigadeContext {
   publicApiKey: string

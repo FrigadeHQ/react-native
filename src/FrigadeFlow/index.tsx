@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from "react";
+import React, {FC} from "react";
 import {OnboardFlow, OnboardFlowProps, PageData, TextStyles} from "react-native-onboard";
 import {useGetMyFlow} from "../api/flows";
 
@@ -13,10 +13,14 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
                                                   }) => {
   const {flow, error, mutate, isLoading} = useGetMyFlow(flowId);
 
+  if (isLoading) {
+    return null;
+  }
+
   return (
     <OnboardFlow
       {...props}
-      pages={JSON.parse(flow.data) as PageData[]}
+      pages={JSON.parse(flow.data).data as PageData[]}
     />
   );
 }
