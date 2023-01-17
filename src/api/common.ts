@@ -1,0 +1,1 @@
+export const API_PREFIX = 'https://api.frigade.com/v1/public/';

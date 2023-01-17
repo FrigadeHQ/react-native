@@ -80,5 +80,9 @@
   "bugs": {
     "url": "https://github.com/FrigadeHQ/react-native/issues"
   },
-  "homepage": "https://github.com/FrigadeHQ/react-native#readme"
+  "homepage": "https://github.com/FrigadeHQ/react-native#readme",
+  "dependencies": {
+    "react-native-onboard": "^2.4.8",
+    "swr": "^2.0.0"
+  }
 }
