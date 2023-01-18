@@ -25,7 +25,8 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
   if (customVariables) {
     // Replace every ${variable} with the value of customVariables[variable] in rawData
     for (const [key, value] of Object.entries(customVariables)) {
-      rawData = rawData.replaceAll(new RegExp(`\\$\\{${key}\\}`, 'g'), value);
+      const escapedValue = value.replace(/"/g, '\\"');
+      rawData = rawData.replaceAll(new RegExp(`\\$\\{${key}\\}`, 'g'), escapedValue);
     }
   }
 
