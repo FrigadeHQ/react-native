@@ -1,5 +1,4 @@
 import React, {createContext, FC, useState} from "react";
-import {SWRConfig} from "swr";
 import {DataFetcher} from "../DataFetcher";
 import {Flow} from "../api/flows";
 
@@ -38,17 +37,11 @@ export const FrigadeProvider: FC<FrigadeProviderProps> = ({
   const [flows, setFlows] = useState<Flow[]>([]);
 
   return (
-    <SWRConfig
-      value={{
-        /* ... */
-      }}
-    >
-      <FrigadeContext.Provider value={{
-        publicApiKey, userId: userIdValue, setUserId: setUserIdValue, setFlows, flows: flows
-      }}>
-        {children}
-        <DataFetcher/>
-      </FrigadeContext.Provider>
-    </SWRConfig>
+    <FrigadeContext.Provider value={{
+      publicApiKey, userId: userIdValue, setUserId: setUserIdValue, setFlows, flows: flows
+    }}>
+      {children}
+      <DataFetcher/>
+    </FrigadeContext.Provider>
   )
 }
