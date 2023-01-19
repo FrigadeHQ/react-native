@@ -1,7 +1,6 @@
-import {FC, useEffect} from "react";
-import {Flow, useGetMyFlows} from "../api/flows";
-import {preload} from "swr";
-import {API_PREFIX} from "../api/common";
+import React, {FC, useContext, useEffect} from "react";
+import {useGetMyFlows} from "../api/flows";
+import {FrigadeContext} from "../FrigadeProvider";
 
 
 interface DataFetcherProps {
@@ -11,15 +10,12 @@ interface DataFetcherProps {
 export const DataFetcher: FC<DataFetcherProps> = ({}) => {
 
   const {getFlows} = useGetMyFlows();
+  const {setFlows} = useContext(FrigadeContext);
 
   async function prefetchFlows() {
     const flows = await getFlows();
     if (flows && flows?.data) {
-      flows.data.forEach((flow: Flow) => {
-        preload(`${API_PREFIX}flows`, () => {
-          return flow;
-        });
-      });
+      setFlows(flows.data);
     } else {
       console.error('Failed to prefetch flows');
     }

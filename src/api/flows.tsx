@@ -1,6 +1,6 @@
-import useSWR from 'swr'
-import React from "react";
+import React, {useContext} from "react";
 import {API_PREFIX, PaginatedResult, useConfig} from "./common";
+import {FrigadeContext} from "../FrigadeProvider";
 
 export interface Flow {
   id: number;
@@ -12,15 +12,12 @@ export interface Flow {
   slug: string;
 }
 
-export function useGetMyFlow(slug: string): { flow: Flow, mutate: () => void, error: boolean, isLoading: boolean } {
-  const {config} = useConfig();
+export function useGetMyFlow(slug: string): { flow?: Flow } {
+  const {flows} = useContext(FrigadeContext);
 
-  const {data, error, mutate, isLoading} = useSWR(`${API_PREFIX}flows/${slug}`,
-    (apiURL: string) => {
-      return fetch(apiURL, config).then(r => r.json())
-    });
-
-  return {flow: data, error, mutate, isLoading};
+  // Find the flow with the same slug in the flows array
+  const flow = flows.find(f => f.slug === slug);
+  return {flow: flow}
 }
 
 export function useGetMyFlows(): { getFlows: () => Promise<PaginatedResult<Flow>> } {

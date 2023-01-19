@@ -82,7 +82,6 @@
   },
   "homepage": "https://github.com/FrigadeHQ/react-native#readme",
   "dependencies": {
-    "react-native-onboard": "^2.4.13",
-    "swr": "^2.0.0"
+    "react-native-onboard": "^2.4.13"
   }
 }
