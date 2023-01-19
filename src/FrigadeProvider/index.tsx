@@ -8,6 +8,12 @@ export interface IFrigadeContext {
   children?: React.ReactNode
 }
 
+export interface FrigadeProviderProps {
+  publicApiKey: string
+  userId?: string,
+  children?: React.ReactNode
+}
+
 export const FrigadeContext = createContext<IFrigadeContext>({
   publicApiKey: '',
   setUserId: () => {
@@ -15,12 +21,12 @@ export const FrigadeContext = createContext<IFrigadeContext>({
 });
 
 
-export const FrigadeProvider: FC<IFrigadeContext> = ({
-                                                       publicApiKey,
-                                                       userId,
-                                                       children
-                                                     }) => {
-  const [userIdValue, setUserIdValue] = useState<string>(userId === undefined ? null : userId);
+export const FrigadeProvider: FC<FrigadeProviderProps> = ({
+                                                            publicApiKey,
+                                                            userId,
+                                                            children
+                                                          }) => {
+  const [userIdValue, setUserIdValue] = useState<string | null>(userId === undefined ? null : userId);
 
   return (
     <SWRConfig

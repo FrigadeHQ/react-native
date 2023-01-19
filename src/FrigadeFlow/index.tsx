@@ -20,6 +20,11 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
     return null;
   }
 
+  if (error || !flow) {
+    console.error('Failed to load Frigade flow with id', flowId);
+    return null;
+  }
+
   let rawData = flow.data;
 
   if (customVariables) {
