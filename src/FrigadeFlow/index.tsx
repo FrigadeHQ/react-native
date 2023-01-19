@@ -1,11 +1,11 @@
 import React, {FC} from "react";
 import {OnboardFlow, OnboardFlowProps, PageData, TextStyles} from "react-native-onboard";
 import {useGetMyFlow} from "../api/flows";
+import {useFrigadeClient} from "../FrigadeClient";
 
 
 interface FrigadeFlowProps extends OnboardFlowProps, TextStyles {
   flowId: string;
-  customVariables?: object;
 }
 
 export const FrigadeFlow: FC<FrigadeFlowProps> = ({
@@ -14,6 +14,7 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
                                                     ...props
                                                   }) => {
   const {flow, error, mutate, isLoading} = useGetMyFlow(flowId);
+  const {userId} = useFrigadeClient();
 
 
   if (isLoading) {

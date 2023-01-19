@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 import React from "react";
-import {API_PREFIX, useConfig} from "./common";
+import {API_PREFIX, PaginatedResult, useConfig} from "./common";
 
 export interface Flow {
   id: number;
@@ -21,4 +21,14 @@ export function useGetMyFlow(slug: string): { flow: Flow, mutate: () => void, er
     });
 
   return {flow: data, error, mutate, isLoading};
+}
+
+export function useGetMyFlows(): { getFlows: () => Promise<PaginatedResult<Flow>> } {
+  const {config} = useConfig();
+
+  function getFlows() {
+    return fetch(`${API_PREFIX}flows`, config).then(r => r.json())
+  }
+
+  return {getFlows};
 }

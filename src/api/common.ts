@@ -6,7 +6,7 @@ export const API_PREFIX = 'https://api.frigade.com/v1/public/';
 
 export function useConfig() {
   const {publicApiKey, userId} = React.useContext(FrigadeContext);
-
+  
   return {
     config: useMemo(
       () => ({
@@ -19,4 +19,10 @@ export function useConfig() {
       [publicApiKey, userId]
     )
   };
+}
+
+export interface PaginatedResult<T> {
+  data: T[];
+  offset: number;
+  limit: number;
 }

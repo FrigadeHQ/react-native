@@ -1,5 +1,6 @@
 import React, {createContext, FC, useState} from "react";
 import {SWRConfig} from "swr";
+import {DataFetcher} from "../DataFetcher";
 
 export interface IFrigadeContext {
   publicApiKey: string
@@ -38,6 +39,7 @@ export const FrigadeProvider: FC<FrigadeProviderProps> = ({
         publicApiKey, userId: userIdValue, setUserId: setUserIdValue
       }}>
         {children}
+        <DataFetcher/>
       </FrigadeContext.Provider>
     </SWRConfig>
   )
