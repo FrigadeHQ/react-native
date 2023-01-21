@@ -1,5 +1,7 @@
 export { FrigadeProvider } from './FrigadeProvider'
 export { FrigadeFlow } from './FrigadeFlow'
-export { useGetMyFlow } from './api/flows'
+export { useFlows } from './api/flows'
+export { useFlowResponses } from './api/flow-responses'
 export { useFrigadeClient } from './FrigadeClient'
+export { useUser } from './api/users'
 export * from 'react-native-onboard'

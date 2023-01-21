@@ -1,47 +1,55 @@
-import React, {createContext, FC, useState} from "react";
-import {DataFetcher} from "../DataFetcher";
-import {Flow} from "../api/flows";
+import React, { createContext, FC, useState } from 'react'
+import { DataFetcher } from '../DataFetcher'
+import { Flow } from '../api/flows'
+import { FlowResponse } from '../api/flow-responses'
 
 export interface IFrigadeContext {
   publicApiKey: string
-  userId?: string,
-  setUserId: (userId?: string) => void,
-  flows: Flow[],
-  setFlows: (flows: Flow[]) => void,
+  userId?: string
+  setUserId: (userId?: string) => void
+  flows: Flow[]
+  setFlows: (flows: Flow[]) => void
+  failedFlowResponses: FlowResponse[]
+  setFailedFlowResponses: (flowResponses: FlowResponse[]) => void
   children?: React.ReactNode
 }
 
 export interface FrigadeProviderProps {
   publicApiKey: string
-  userId?: string,
+  userId?: string
   children?: React.ReactNode
 }
 
 export const FrigadeContext = createContext<IFrigadeContext>({
   publicApiKey: '',
-  setUserId: () => {
-  },
+  setUserId: () => {},
   flows: [],
-  setFlows: () => {
+  setFlows: () => {},
+  failedFlowResponses: [],
+  setFailedFlowResponses: () => {},
+})
 
-  }
-});
-
-
-export const FrigadeProvider: FC<FrigadeProviderProps> = ({
-                                                            publicApiKey,
-                                                            userId,
-                                                            children
-                                                          }) => {
-  const [userIdValue, setUserIdValue] = useState<string | null>(userId === undefined ? null : userId);
-  const [flows, setFlows] = useState<Flow[]>([]);
+export const FrigadeProvider: FC<FrigadeProviderProps> = ({ publicApiKey, userId, children }) => {
+  const [userIdValue, setUserIdValue] = useState<string | null>(
+    userId === undefined ? null : userId
+  )
+  const [flows, setFlows] = useState<Flow[]>([])
+  const [failedFlowResponses, setFailedFlowResponses] = useState<FlowResponse[]>([])
 
   return (
-    <FrigadeContext.Provider value={{
-      publicApiKey, userId: userIdValue, setUserId: setUserIdValue, setFlows, flows: flows
-    }}>
+    <FrigadeContext.Provider
+      value={{
+        publicApiKey,
+        userId: userIdValue,
+        setUserId: setUserIdValue,
+        setFlows,
+        flows: flows,
+        failedFlowResponses,
+        setFailedFlowResponses,
+      }}
+    >
       {children}
-      <DataFetcher/>
+      <DataFetcher />
     </FrigadeContext.Provider>
   )
 }
