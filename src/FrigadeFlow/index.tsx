@@ -36,7 +36,7 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({ flowId, customVariables, ...
       pages={JSON.parse(rawData).data as PageData[]}
       onSaveData={(data) => {
         {
-          //console.log('Data saved', data);
+          // console.log('Data saved', data)
         }
       }}
     />
