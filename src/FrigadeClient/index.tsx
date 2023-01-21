@@ -1,8 +1,8 @@
-import {useContext} from "react";
-import {FrigadeContext} from "../FrigadeProvider";
+import { useContext } from 'react'
+import { FrigadeContext } from '../FrigadeProvider'
 
 export function useFrigadeClient() {
-  const {publicApiKey, userId, setUserId} = useContext(FrigadeContext);
+  const { publicApiKey, userId, setUserId } = useContext(FrigadeContext)
 
-  return {setUserId, userId, publicApiKey};
+  return { setUserId, userId, publicApiKey }
 }
