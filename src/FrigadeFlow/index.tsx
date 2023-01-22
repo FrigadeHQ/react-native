@@ -12,9 +12,15 @@ import { useUser } from '../api/users'
 
 interface FrigadeFlowProps extends OnboardFlowProps, TextStyles {
   flowId: string
+  onFlowResponse?: (flowResponse: FlowResponse) => void
 }
 
-export const FrigadeFlow: FC<FrigadeFlowProps> = ({ flowId, customVariables, ...props }) => {
+export const FrigadeFlow: FC<FrigadeFlowProps> = ({
+  flowId,
+  onFlowResponse,
+  customVariables,
+  ...props
+}) => {
   const { getFlow } = useFlows()
   const { userId } = useUser()
   const { addResponse, markFlowStarted, markFlowCompleted } = useFlowResponses()
@@ -62,15 +68,18 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({ flowId, customVariables, ...
       onSaveData={async (data) => {
         if (!hasStartedFlow) {
           setHasStartedFlow(true)
-          await markFlowStarted(userId, flow.slug)
+          const flowResponseStarted = await markFlowStarted(userId, flow.slug)
+          onFlowResponse?.(flowResponseStarted)
         }
         const flowResponse = stepResponseDataToFlowResponse(data)
         await addResponse(flowResponse)
+        onFlowResponse?.(flowResponse)
       }}
       onDone={async () => {
         if (!hasEndedFlow) {
           setHasEndedFlow(true)
-          await markFlowCompleted(userId, flow.slug)
+          const flowResponse = await markFlowCompleted(userId, flow.slug)
+          onFlowResponse?.(flowResponse)
         }
       }}
     />

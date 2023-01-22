@@ -6,7 +6,7 @@ export interface FlowResponse {
   foreignUserId: string
   flowSlug: string
   stepId: string
-  actionType: 'STARTED_FLOW' | 'STARTED_STEP' | 'COMPLETED_STEP' | 'COMPLETED_FLOW' | 'ABORTED_FLOW'
+  actionType: string
   data: object
   createdAt: Date
 }
@@ -76,25 +76,29 @@ export function useFlowResponses() {
   }
 
   async function markFlowStarted(userId: string, flowSlug: string) {
-    await addResponse({
+    const flowResponse = {
       foreignUserId: userId,
       flowSlug: flowSlug,
       stepId: 'startFlow',
       actionType: 'STARTED_FLOW',
       data: {},
       createdAt: new Date(),
-    })
+    }
+    await addResponse(flowResponse)
+    return flowResponse
   }
 
   async function markFlowCompleted(userId: string, flowSlug: string) {
-    await addResponse({
+    const flowResponse = {
       foreignUserId: userId,
       flowSlug: flowSlug,
       stepId: 'endFlow',
       actionType: 'COMPLETED_FLOW',
       data: {},
       createdAt: new Date(),
-    })
+    }
+    await addResponse(flowResponse)
+    return flowResponse
   }
 
   return { addResponse, markFlowStarted, markFlowCompleted }
