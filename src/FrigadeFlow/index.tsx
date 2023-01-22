@@ -1,4 +1,5 @@
 import React, { FC, useState } from 'react'
+import { ActivityIndicator, StyleSheet, View } from 'react-native'
 import {
   OnboardFlow,
   OnboardFlowProps,
@@ -30,8 +31,11 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
   const flow = getFlow(flowId)
 
   if (!flow) {
-    console.error('Failed to load Frigade flow with id', flowId)
-    return null
+    return (
+      <View style={[styles.loader]}>
+        <ActivityIndicator />
+      </View>
+    )
   }
 
   let rawData = flow.data
@@ -85,3 +89,13 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
     />
   )
 }
+
+const styles = StyleSheet.create({
+  loader: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    padding: 10,
+  },
+})
