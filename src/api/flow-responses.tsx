@@ -55,16 +55,16 @@ export function useFlowResponses() {
   }
 
   async function sendDataToBackend() {
-    const mapClone = new Map(flowResponseMap)
-    for (const [stepId, responses] of mapClone.entries()) {
-      const pendingResponses = mapClone.get(stepId)
+    for (const [stepId, responses] of flowResponseMap.entries()) {
+      const pendingResponses = flowResponseMap.get(stepId)
       if (pendingResponses) {
         for (const [actionType, flowResponse] of pendingResponses) {
           await postFlowResponse(flowResponse)
         }
       }
+      flowResponseMap.delete(stepId)
+      setFlowResponseMap(flowResponseMap)
     }
-    setFlowResponseMap(new Map())
   }
 
   function recordResponse(flowResponse: FlowResponse) {
