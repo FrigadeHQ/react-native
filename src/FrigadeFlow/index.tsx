@@ -20,6 +20,10 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
   flowId,
   onFlowResponse,
   customVariables,
+  enableScroll,
+  paginationColor,
+  paginationSelectedColor,
+  autoPlay,
   ...props
 }) => {
   const { getFlow } = useFlows()
@@ -65,10 +69,12 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
     }
   }
 
+  const parsedData = JSON.parse(rawData)
+
   return (
     <OnboardFlow
       {...props}
-      pages={JSON.parse(rawData).data as PageData[]}
+      pages={parsedData.data as PageData[]}
       onSaveData={async (data) => {
         if (!hasStartedFlow) {
           setHasStartedFlow(true)
@@ -86,6 +92,10 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
           onFlowResponse?.(flowResponse)
         }
       }}
+      autoPlay={parsedData.autoPlay ?? autoPlay}
+      enableScroll={parsedData.enableScroll ?? enableScroll}
+      paginationColor={parsedData.paginationColor ?? paginationColor}
+      paginationSelectedColor={parsedData.paginationSelectedColor ?? paginationSelectedColor}
     />
   )
 }
