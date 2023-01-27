@@ -82,7 +82,7 @@
   },
   "homepage": "https://github.com/FrigadeHQ/react-native#readme",
   "dependencies": {
-    "react-native-onboard": "^2.4.31",
+    "react-native-onboard": "^2.4.33",
     "react-native-uuid": "^2.0.1"
   }
 }
