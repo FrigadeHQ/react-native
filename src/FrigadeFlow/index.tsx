@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { ActivityIndicator, StyleSheet, View } from 'react-native'
 import {
   OnboardFlow,
@@ -13,6 +13,7 @@ import { useUser } from '../api/users'
 
 interface FrigadeFlowProps extends OnboardFlowProps, TextStyles {
   flowId: string
+  userIdOverride?: string
   onFlowResponse?: (flowResponse: FlowResponse) => void
 }
 
@@ -24,15 +25,22 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
   paginationColor,
   paginationSelectedColor,
   autoPlay,
+  userIdOverride,
   ...props
 }) => {
   const { getFlow } = useFlows()
-  const { userId } = useUser()
+  const { userId, setUserId } = useUser()
   const { addResponse, markFlowStarted, markFlowCompleted } = useFlowResponses()
   const [hasStartedFlow, setHasStartedFlow] = useState(false)
   const [hasEndedFlow, setHasEndedFlow] = useState(false)
 
   const flow = getFlow(flowId)
+
+  useEffect(() => {
+    if (userIdOverride) {
+      setUserId(userIdOverride)
+    }
+  }, [userIdOverride])
 
   if (!flow) {
     return (
