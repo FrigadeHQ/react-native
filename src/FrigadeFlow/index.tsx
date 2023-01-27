@@ -26,6 +26,7 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
   paginationSelectedColor,
   autoPlay,
   userIdOverride,
+  onDone,
   ...props
 }) => {
   const { getFlow } = useFlows()
@@ -98,6 +99,9 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
           setHasEndedFlow(true)
           const flowResponse = await markFlowCompleted(userId, flow.slug)
           onFlowResponse?.(flowResponse)
+        }
+        if (onDone) {
+          onDone()
         }
       }}
       autoPlay={parsedData.autoPlay ?? autoPlay}
