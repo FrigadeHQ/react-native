@@ -27,6 +27,7 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
   autoPlay,
   userIdOverride,
   onDone,
+  onNext,
   ...props
 }) => {
   const { getFlow } = useFlows()
@@ -34,6 +35,7 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
   const { addResponse, markFlowStarted, markFlowCompleted } = useFlowResponses()
   const [hasStartedFlow, setHasStartedFlow] = useState(false)
   const [hasEndedFlow, setHasEndedFlow] = useState(false)
+  const [lastFlowResponse, setLastFlowResponse] = useState<FlowResponse>(null)
 
   const flow = getFlow(flowId)
 
@@ -67,13 +69,16 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
     }
   }
 
-  function stepResponseDataToFlowResponse(stepResponseData: StepResponseData): FlowResponse {
+  function stepResponseDataToFlowResponse(
+    stepResponseData: StepResponseData,
+    actionType: string = 'STARTED_STEP'
+  ): FlowResponse {
     return {
       foreignUserId: userId,
       flowSlug: flow.slug,
       stepId: stepResponseData.source.id ?? 'unknown',
       data: stepResponseData.data,
-      actionType: stepResponseData.data?.type === 'IMPRESSION' ? 'STARTED_STEP' : 'COMPLETED_STEP',
+      actionType: actionType,
       createdAt: new Date(),
     }
   }
@@ -91,7 +96,17 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
           onFlowResponse?.(flowResponseStarted)
         }
         const flowResponse = stepResponseDataToFlowResponse(data)
+        setLastFlowResponse(flowResponse)
         await addResponse(flowResponse)
+        onFlowResponse?.(flowResponse)
+      }}
+      onNext={async () => {
+        let flowResponse = lastFlowResponse
+        flowResponse.actionType = 'COMPLETED_STEP'
+        await addResponse(flowResponse)
+        if (onNext) {
+          onNext()
+        }
         onFlowResponse?.(flowResponse)
       }}
       onDone={async () => {

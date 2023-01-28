@@ -14,6 +14,7 @@ export interface FlowResponse {
 export function useFlowResponses() {
   const { config } = useConfig()
   const { failedFlowResponses, setFailedFlowResponses } = useContext(FrigadeContext)
+  const [successfulFlowResponses, setSuccessfulFlowResponses] = useState<Set<String>>(new Set())
 
   const [flowResponseMap, setFlowResponseMap] = useState<Map<string, Map<string, FlowResponse>>>(
     new Map()
@@ -22,10 +23,17 @@ export function useFlowResponses() {
   const [currentStep, setCurrentStep] = useState<string>('')
 
   function postFlowResponse(flowResponse: FlowResponse) {
+    const flowResponseString = JSON.stringify(flowResponse)
+
+    if (successfulFlowResponses.has(flowResponseString)) {
+      return
+    }
+    successfulFlowResponses.add(flowResponseString)
+
     return fetch(`${API_PREFIX}flowResponses`, {
       ...config,
       method: 'POST',
-      body: JSON.stringify(flowResponse),
+      body: flowResponseString,
     }).then((r) => {
       if (r.status !== 200 && r.status !== 201) {
         console.log(
@@ -45,12 +53,14 @@ export function useFlowResponses() {
     } else if (flowResponse.actionType === 'COMPLETED_FLOW') {
       recordResponse(flowResponse)
       await sendDataToBackend() // Send previous step data to backend
-    } else if (flowResponse.actionType === 'STARTED_STEP' && flowResponse.stepId !== currentStep) {
-      await sendDataToBackend() // Send previous step data to backend
+    } else if (flowResponse.actionType === 'STARTED_STEP') {
       setCurrentStep(flowResponse.stepId)
       recordResponse(flowResponse)
-    } else {
+    } else if (flowResponse.actionType === 'COMPLETED_STEP') {
+      await sendDataToBackend() // Send previous step data to backend
+      setFlowResponseMap(new Map()) // Clear existing data
       recordResponse(flowResponse)
+      await sendDataToBackend() // Send completed step data to backend
     }
   }
 
