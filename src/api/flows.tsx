@@ -15,9 +15,10 @@ export interface Flow {
 export function useFlows(): {
   getFlows: () => Promise<PaginatedResult<Flow> | null>
   getFlow(slug: string): Flow | null
+  hasLoadedData: boolean
 } {
   const { config } = useConfig()
-  const { flows } = useContext(FrigadeContext)
+  const { flows, hasLoadedData, setHasLoadedData } = useContext(FrigadeContext)
 
   function getFlows() {
     return fetch(`${API_PREFIX}flows`, config).then((r) => r.json())
@@ -27,5 +28,5 @@ export function useFlows(): {
     return flows.find((f) => f.slug === slug)
   }
 
-  return { getFlows, getFlow }
+  return { getFlows, getFlow, hasLoadedData }
 }

@@ -12,6 +12,8 @@ export interface IFrigadeContext {
   failedFlowResponses: FlowResponse[]
   setFailedFlowResponses: (flowResponses: FlowResponse[]) => void
   children?: React.ReactNode
+  hasLoadedData: boolean
+  setHasLoadedData: (hasLoadedData: boolean) => void
 }
 
 export interface FrigadeProviderProps {
@@ -27,6 +29,8 @@ export const FrigadeContext = createContext<IFrigadeContext>({
   setFlows: () => {},
   failedFlowResponses: [],
   setFailedFlowResponses: () => {},
+  hasLoadedData: false,
+  setHasLoadedData: () => {},
 })
 
 export const FrigadeProvider: FC<FrigadeProviderProps> = ({ publicApiKey, userId, children }) => {
@@ -35,6 +39,7 @@ export const FrigadeProvider: FC<FrigadeProviderProps> = ({ publicApiKey, userId
   )
   const [flows, setFlows] = useState<Flow[]>([])
   const [failedFlowResponses, setFailedFlowResponses] = useState<FlowResponse[]>([])
+  const [hasLoadedData, setHasLoadedData] = useState(false)
 
   return (
     <FrigadeContext.Provider
@@ -46,6 +51,8 @@ export const FrigadeProvider: FC<FrigadeProviderProps> = ({ publicApiKey, userId
         flows: flows,
         failedFlowResponses,
         setFailedFlowResponses,
+        hasLoadedData,
+        setHasLoadedData,
       }}
     >
       {children}

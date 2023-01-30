@@ -102,6 +102,9 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
       }}
       onNext={async () => {
         let flowResponse = lastFlowResponse
+        if (!lastFlowResponse) {
+          return
+        }
         flowResponse.actionType = 'COMPLETED_STEP'
         await addResponse(flowResponse)
         if (onNext) {
