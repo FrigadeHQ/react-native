@@ -36,6 +36,8 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
   const [hasStartedFlow, setHasStartedFlow] = useState(false)
   const [hasEndedFlow, setHasEndedFlow] = useState(false)
   const [lastFlowResponse, setLastFlowResponse] = useState<FlowResponse>(null)
+  // Create map of pageId to lastSavedPageData
+  const [lastSavedPageData, setLastSavedPageData] = useState<Record<string, FlowResponse>>({})
 
   const flow = getFlow(flowId)
 
@@ -51,6 +53,20 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
         <ActivityIndicator />
       </View>
     )
+  }
+
+  function stepResponseDataToFlowResponse(
+    stepResponseData: StepResponseData,
+    actionType: string = 'STARTED_STEP'
+  ): FlowResponse {
+    return {
+      foreignUserId: userId,
+      flowSlug: flow.slug,
+      stepId: stepResponseData.source.id ?? 'unknown',
+      data: stepResponseData.data,
+      actionType: actionType,
+      createdAt: new Date(),
+    }
   }
 
   let rawData = flow.data
@@ -69,17 +85,20 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
     }
   }
 
-  function stepResponseDataToFlowResponse(
-    stepResponseData: StepResponseData,
-    actionType: string = 'STARTED_STEP'
-  ): FlowResponse {
-    return {
-      foreignUserId: userId,
-      flowSlug: flow.slug,
-      stepId: stepResponseData.source.id ?? 'unknown',
-      data: stepResponseData.data,
-      actionType: actionType,
-      createdAt: new Date(),
+  const preParsedData = JSON.parse(rawData)
+  let customVariablesFromAPI = {}
+  // Check if there are any customVariables
+  if (preParsedData.customVariables) {
+    // Replace every ${variable} with the value of customVariables[variable] in rawData
+    for (const [key, value] of Object.entries(preParsedData.customVariables)) {
+      customVariablesFromAPI[key] = value
+
+      if (typeof value !== 'string') {
+        continue
+      }
+
+      const escapedValue = value.replace(/"/g, '\\"')
+      rawData = rawData.replaceAll(new RegExp(`\\$\\{${key}\\}`, 'g'), escapedValue)
     }
   }
 
@@ -96,20 +115,17 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
           onFlowResponse?.(flowResponseStarted)
         }
         const flowResponse = stepResponseDataToFlowResponse(data)
+
+        // Check if page has changed
+        if (lastFlowResponse && lastFlowResponse?.stepId !== flowResponse.stepId) {
+          // New page -- complete the last page
+          let flowResponse = lastFlowResponse
+          flowResponse.actionType = 'COMPLETED_STEP'
+          await addResponse(flowResponse)
+          onFlowResponse?.(flowResponse)
+        }
         setLastFlowResponse(flowResponse)
         await addResponse(flowResponse)
-        onFlowResponse?.(flowResponse)
-      }}
-      onNext={async () => {
-        let flowResponse = lastFlowResponse
-        if (!lastFlowResponse) {
-          return
-        }
-        flowResponse.actionType = 'COMPLETED_STEP'
-        await addResponse(flowResponse)
-        if (onNext) {
-          onNext()
-        }
         onFlowResponse?.(flowResponse)
       }}
       onDone={async () => {
