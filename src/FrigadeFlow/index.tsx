@@ -36,8 +36,6 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
   const [hasStartedFlow, setHasStartedFlow] = useState(false)
   const [hasEndedFlow, setHasEndedFlow] = useState(false)
   const [lastFlowResponse, setLastFlowResponse] = useState<FlowResponse>(null)
-  // Create map of pageId to lastSavedPageData
-  const [lastSavedPageData, setLastSavedPageData] = useState<Record<string, FlowResponse>>({})
 
   const flow = getFlow(flowId)
 
@@ -76,7 +74,6 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
     for (const [key, value] of Object.entries(customVariables)) {
       // Validate that value is a string
       if (typeof value !== 'string') {
-        console.error('Custom variable', key, 'is not a string. Skipping for now')
         continue
       }
 
@@ -102,7 +99,31 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
     }
   }
 
-  const parsedData = JSON.parse(rawData)
+  let parsedData = JSON.parse(rawData)
+  if (customVariables) {
+    // Check if parsedData.data has any page types of  type multipleChoice
+    // Then check if the page.props.dataSource is is set
+    // If this is the case, override page.props.fields with data from the dataSource
+    let index = 0
+    for (const page of parsedData.data) {
+      if (page.type === 'multipleChoice' && page.props.dataSource) {
+        const dataSource = page.props.dataSource
+        // Remvoe ${} from dataSource
+        const dataSourceWithoutBrackets = dataSource.replace(/[${}]/g, '')
+        // Check if dataSource is in customVariables
+        if (customVariables[dataSourceWithoutBrackets]) {
+          // Ensure that data is an array and that it has at least one element
+          if (
+            Array.isArray(customVariables[dataSourceWithoutBrackets]) &&
+            customVariables[dataSourceWithoutBrackets].length > 0
+          ) {
+            parsedData.data[index].props.fields = customVariables[dataSourceWithoutBrackets]
+          }
+        }
+      }
+      index++
+    }
+  }
 
   return (
     <OnboardFlow

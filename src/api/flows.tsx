@@ -15,6 +15,7 @@ export interface Flow {
 export function useFlows(): {
   getFlows: () => Promise<PaginatedResult<Flow> | null>
   getFlow(slug: string): Flow | null
+  getFlowData(slug: string): object | null
   hasLoadedData: boolean
 } {
   const { config } = useConfig()
@@ -28,5 +29,9 @@ export function useFlows(): {
     return flows.find((f) => f.slug === slug)
   }
 
-  return { getFlows, getFlow, hasLoadedData }
+  function getFlowData(slug: string): Flow {
+    return JSON.parse(flows.find((f) => f.slug === slug).data)
+  }
+
+  return { getFlows, getFlow, getFlowData, hasLoadedData }
 }
