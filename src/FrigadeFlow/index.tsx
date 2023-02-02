@@ -32,7 +32,6 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
   const [lastFlowResponse, setLastFlowResponse] = useState<FlowResponse>(null)
   const [currentPage, setCurrentPage] = useState(0)
   const [pages, setPages] = useState<PageData[]>([])
-
   const flow = getFlow(flowId)
 
   useEffect(() => {
@@ -128,7 +127,7 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
   return (
     <OnboardFlow
       {...props}
-      pages={pages}
+      pages={parsedData.data as PageData[]}
       onSaveData={async (data) => {
         if (!hasStartedFlow) {
           setHasStartedFlow(true)
