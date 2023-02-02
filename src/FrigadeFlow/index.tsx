@@ -1,12 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import { ActivityIndicator, StyleSheet, View } from 'react-native'
-import {
-  OnboardFlow,
-  OnboardFlowProps,
-  PageData,
-  StepResponseData,
-  TextStyles,
-} from 'react-native-onboard'
+import { OnboardFlow, OnboardFlowProps, PageData, TextStyles } from 'react-native-onboard'
 import { useFlows } from '../api/flows'
 import { FlowResponse, useFlowResponses } from '../api/flow-responses'
 import { useUser } from '../api/users'
@@ -36,6 +30,8 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
   const [hasStartedFlow, setHasStartedFlow] = useState(false)
   const [hasEndedFlow, setHasEndedFlow] = useState(false)
   const [lastFlowResponse, setLastFlowResponse] = useState<FlowResponse>(null)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [pages, setPages] = useState<PageData[]>([])
 
   const flow = getFlow(flowId)
 
@@ -54,14 +50,15 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
   }
 
   function stepResponseDataToFlowResponse(
-    stepResponseData: StepResponseData,
+    data: any,
     actionType: string = 'STARTED_STEP'
   ): FlowResponse {
+    const stepId = pages[currentPage]?.id ?? 'unknown'
     return {
       foreignUserId: userId,
       flowSlug: flow.slug,
-      stepId: stepResponseData.source.id ?? 'unknown',
-      data: stepResponseData.data,
+      stepId: stepId,
+      data: { ...data, stepId: stepId },
       actionType: actionType,
       createdAt: new Date(),
     }
@@ -125,10 +122,14 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
     }
   }
 
+  if (pages.length == 0) {
+    setPages(parsedData.data as PageData[])
+  }
+
   return (
     <OnboardFlow
       {...props}
-      pages={parsedData.data as PageData[]}
+      pages={pages}
       onSaveData={async (data) => {
         if (!hasStartedFlow) {
           setHasStartedFlow(true)
@@ -163,6 +164,8 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
       enableScroll={parsedData.enableScroll ?? enableScroll}
       paginationColor={parsedData.paginationColor ?? paginationColor}
       paginationSelectedColor={parsedData.paginationSelectedColor ?? paginationSelectedColor}
+      currentPage={currentPage}
+      setCurrentPage={setCurrentPage}
     />
   )
 }
