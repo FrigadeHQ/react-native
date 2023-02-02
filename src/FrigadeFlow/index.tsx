@@ -53,12 +53,11 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
     data: any,
     actionType: string = 'STARTED_STEP'
   ): FlowResponse {
-    const stepId = pages[currentPage]?.id ?? 'unknown'
     return {
       foreignUserId: userId,
       flowSlug: flow.slug,
-      stepId: stepId,
-      data: { ...data, stepId: stepId },
+      stepId: pages[currentPage]?.id ?? 'unknown',
+      data: data.data,
       actionType: actionType,
       createdAt: new Date(),
     }
