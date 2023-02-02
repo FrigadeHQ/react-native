@@ -14,7 +14,12 @@ export interface FlowResponse {
 export function useFlowResponses() {
   const { config } = useConfig()
   const { failedFlowResponses, setFailedFlowResponses } = useContext(FrigadeContext)
-  const [successfulFlowResponses, setSuccessfulFlowResponses] = useState<Set<String>>(new Set())
+  const [successfulFlowResponsesStrings, setSuccessfulFlowResponsesStrings] = useState<Set<String>>(
+    new Set()
+  )
+  const [successfulFlowResponses, setSuccessfulFlowResponses] = useState<Set<FlowResponse>>(
+    new Set()
+  )
 
   const [flowResponseMap, setFlowResponseMap] = useState<Map<string, Map<string, FlowResponse>>>(
     new Map()
@@ -25,10 +30,13 @@ export function useFlowResponses() {
   function postFlowResponse(flowResponse: FlowResponse) {
     const flowResponseString = JSON.stringify(flowResponse)
 
-    if (successfulFlowResponses.has(flowResponseString)) {
+    if (successfulFlowResponsesStrings.has(flowResponseString)) {
       return
     }
-    successfulFlowResponses.add(flowResponseString)
+    successfulFlowResponsesStrings.add(flowResponseString)
+    setSuccessfulFlowResponsesStrings(successfulFlowResponsesStrings)
+    successfulFlowResponses.add(flowResponse)
+    setSuccessfulFlowResponses(successfulFlowResponses)
 
     return fetch(`${API_PREFIX}flowResponses`, {
       ...config,
@@ -104,7 +112,7 @@ export function useFlowResponses() {
       flowSlug: flowSlug,
       stepId: 'endFlow',
       actionType: 'COMPLETED_FLOW',
-      data: {},
+      data: { flowResponses: Array.from(successfulFlowResponses) },
       createdAt: new Date(),
     }
     await addResponse(flowResponse)

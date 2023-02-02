@@ -32,6 +32,7 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
   const [lastFlowResponse, setLastFlowResponse] = useState<FlowResponse>(null)
   const [currentPage, setCurrentPage] = useState(0)
   const [pages, setPages] = useState<PageData[]>([])
+
   const flow = getFlow(flowId)
 
   useEffect(() => {
@@ -39,6 +40,21 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
       setUserId(userIdOverride)
     }
   }, [userIdOverride])
+
+  async function markLastStepAsCompleted() {
+    // Check if page has changed
+    if (lastFlowResponse) {
+      // New page -- complete the last page
+      let flowResponse = lastFlowResponse
+      flowResponse.actionType = 'COMPLETED_STEP'
+      await addResponse(flowResponse)
+      onFlowResponse?.(flowResponse)
+    }
+  }
+
+  useEffect(() => {
+    markLastStepAsCompleted()
+  }, [currentPage])
 
   if (!flow) {
     return (
@@ -136,20 +152,13 @@ export const FrigadeFlow: FC<FrigadeFlowProps> = ({
         }
         const flowResponse = stepResponseDataToFlowResponse(data)
 
-        // Check if page has changed
-        if (lastFlowResponse && lastFlowResponse?.stepId !== flowResponse.stepId) {
-          // New page -- complete the last page
-          let flowResponse = lastFlowResponse
-          flowResponse.actionType = 'COMPLETED_STEP'
-          await addResponse(flowResponse)
-          onFlowResponse?.(flowResponse)
-        }
         setLastFlowResponse(flowResponse)
         await addResponse(flowResponse)
         onFlowResponse?.(flowResponse)
       }}
       onDone={async () => {
         if (!hasEndedFlow) {
+          await markLastStepAsCompleted()
           setHasEndedFlow(true)
           const flowResponse = await markFlowCompleted(userId, flow.slug)
           onFlowResponse?.(flowResponse)
